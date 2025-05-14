@@ -16,6 +16,7 @@ class CustomLogoutView(LogoutView):
 
 def home_view(request):
     productos = Producto.objects.all()
+    print(f"Cantidad de productos en DB: {productos.count()}")
     return render(request, 'core/home.html', {'productos': productos})
 
 @login_required
