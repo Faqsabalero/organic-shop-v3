@@ -1,0 +1,123 @@
+{% extends "core/base.html" %}
+
+{% block title %}Panel de Administración - Organic Shops{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <!-- Header -->
+        <div class="px-6 py-4 bg-green-700">
+            <h2 class="text-2xl font-bold text-white">Panel de Administración</h2>
+        </div>
+
+        <!-- Formulario de Asignación -->
+        <div class="p-6 bg-white border-b border-gray-200">
+            <h3 class="text-xl font-semibold text-green-700 mb-4">Nueva Asignación</h3>
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="{{ form.distribuidor.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            Distribuidor
+                        </label>
+                        {{ form.distribuidor }}
+                        {% if form.distribuidor.errors %}
+                            <p class="text-red-600 text-sm mt-1">{{ form.distribuidor.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label for="{{ form.producto.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            Producto
+                        </label>
+                        {{ form.producto }}
+                        {% if form.producto.errors %}
+                            <p class="text-red-600 text-sm mt-1">{{ form.producto.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label for="{{ form.cantidad.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            Cantidad
+                        </label>
+                        {{ form.cantidad }}
+                        {% if form.cantidad.errors %}
+                            <p class="text-red-600 text-sm mt-1">{{ form.cantidad.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <label for="{{ form.plan_pago.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            Plan de Pago
+                        </label>
+                        {{ form.plan_pago }}
+                        {% if form.plan_pago.errors %}
+                            <p class="text-red-600 text-sm mt-1">{{ form.plan_pago.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="flex justify-end mt-6">
+                    <button type="submit" class="px-6 py-2 bg-green-700 text-white font-semibold rounded-md hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 transition">
+                        Crear Asignación
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tabla de Asignaciones -->
+        <div class="p-6">
+            <h3 class="text-xl font-semibold text-green-700 mb-4">Lista de Asignaciones</h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Fecha
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Distribuidor
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Producto
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Cantidad
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Plan de Pago
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for asignacion in asignaciones %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ asignacion.fecha_asignacion|date:"d/m/Y H:i" }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">{{ asignacion.distribuidor.username }}</div>
+                                <div class="text-sm text-gray-500">{{ asignacion.distribuidor.email }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{ asignacion.producto.nombre }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ asignacion.cantidad }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {% if asignacion.plan_pago == 'CONTADO' %}bg-green-100 text-green-800{% else %}bg-blue-100 text-blue-800{% endif %}">
+                                    {{ asignacion.get_plan_pago_display }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
+                                No hay asignaciones registradas.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ORGANIC SHOPS{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto&display=swap" rel="stylesheet"/>
+    <style>
+        body { font-family: 'Roboto', sans-serif; }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Montserrat', sans-serif; }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+            <a href="{% url 'core:home' %}" class="flex items-center space-x-3">
+                <img src="https://storage.googleapis.com/a1aa/image/6aaebe32-d6ed-4dec-96f6-ff630ed08f4d.jpg" 
+                     alt="Logo" class="h-12 w-12 object-contain">
+                <span class="text-2xl font-bold text-green-600">Organic Shops</span>
+            </a>
+            
+            <nav class="hidden md:flex space-x-8 font-semibold text-black">
+                <a href="{% url 'core:home' %}" class="hover:text-green-300 transition">Inicio</a>
+                {% if user.is_authenticated %}
+                    {% if user.rol == 'ADMIN' %}
+                        <a href="{% url 'core:asignar' %}" class="hover:text-green-300 transition">Panel Admin</a>
+                    {% elif user.rol == 'DISTRIBUIDOR' %}
+                        <a href="{% url 'core:distribuidor' %}" class="hover:text-green-300 transition">Mi Panel</a>
+                    {% endif %}
+                    <a href="{% url 'core:logout' %}" class="hover:text-green-300 transition">Cerrar Sesión</a>
+                {% else %}
+                    <a href="{% url 'core:login' %}" class="hover:text-green-300 transition">Iniciar Sesión</a>
+                {% endif %}
+            </nav>
+
+            <!-- Mobile menu button -->
+            <button id="mobile-menu-button" class="md:hidden text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-600">
+                <i class="fas fa-bars fa-lg"></i>
+            </button>
+        </div>
+
+        <!-- Mobile menu -->
+        <nav id="mobile-menu" class="md:hidden bg-white border-t border-gray-200 hidden">
+            <a href="{% url 'core:home' %}" class="block px-4 py-3 border-b border-gray-200 hover:bg-green-50 font-semibold text-green-600">
+                Inicio
+            </a>
+            {% if user.is_authenticated %}
+                {% if user.rol == 'ADMIN' %}
+                    <a href="{% url 'core:asignar' %}" class="block px-4 py-3 border-b border-gray-200 hover:bg-green-50 font-semibold text-green-600">
+                        Panel Admin
+                    </a>
+                {% elif user.rol == 'DISTRIBUIDOR' %}
+                    <a href="{% url 'core:distribuidor' %}" class="block px-4 py-3 border-b border-gray-200 hover:bg-green-50 font-semibold text-green-600">
+                        Mi Panel
+                    </a>
+                {% endif %}
+                <a href="{% url 'core:logout' %}" class="block px-4 py-3 hover:bg-green-50 font-semibold text-green-600">
+                    Cerrar Sesión
+                </a>
+            {% else %}
+                <a href="{% url 'core:login' %}" class="block px-4 py-3 hover:bg-green-50 font-semibold text-green-600">
+                    Iniciar Sesión
+                </a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <!-- Mensajes -->
+    {% if messages %}
+        <div class="container mx-auto px-4 mt-4">
+            {% for message in messages %}
+                <div class="p-4 mb-4 rounded-lg {% if message.tags == 'success' %}bg-green-100 text-green-700{% elif message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Contenido principal -->
+    <main class="min-h-screen">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-green-800 text-green-200 py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
+            <p class="text-sm">© {% now "Y" %} Organic Shops. Todos los derechos reservados.</p>
+            <nav class="mt-4 md:mt-0 space-x-6 font-semibold">
+                <a href="{% url 'core:home' %}" class="hover:text-green-400 transition">Inicio</a>
+                {% if user.is_authenticated %}
+                    {% if user.rol == 'ADMIN' %}
+                        <a href="{% url 'core:asignar' %}" class="hover:text-green-400 transition">Panel Admin</a>
+                    {% elif user.rol == 'DISTRIBUIDOR' %}
+                        <a href="{% url 'core:distribuidor' %}" class="hover:text-green-400 transition">Mi Panel</a>
+                    {% endif %}
+                {% endif %}
+            </nav>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

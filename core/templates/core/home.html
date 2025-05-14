@@ -1,0 +1,199 @@
+{% extends "core/base.html" %}
+
+{% block title %}Inicio - Organic Shops{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative bg-green-100 flex flex-col-reverse md:flex-row items-center max-w-7xl mx-auto px-6 py-16 md:py-24 gap-10" id="home">
+    <div class="md:w-1/2 text-center md:text-left">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-green-800 leading-tight">
+            Productos orgánicos para tu bienestar
+        </h1>
+        <p class="mt-6 text-lg text-green-700 max-w-md mx-auto md:mx-0">
+            Descubre productos naturales y terapias basadas en cannabis para mejorar tu calidad de vida.
+        </p>
+        <a href="#products" class="inline-block mt-8 px-8 py-3 bg-green-700 text-white font-semibold rounded-md shadow-md hover:bg-green-800 transition">
+            Contáctate
+        </a>
+    </div>
+    <div class="md:w-1/2 flex justify-center relative">
+        <div class="w-full max-w-3xl relative overflow-hidden rounded-lg shadow-lg select-none" id="carousel-container">
+            <div class="relative w-full h-64 sm:h-96" id="carousel">
+                <!-- Carousel items -->
+                <div class="absolute inset-0 transition-opacity duration-700 ease-in-out opacity-100" data-carousel-item="">
+                    <img src="https://storage.googleapis.com/a1aa/image/924b4e0b-cd3a-406c-4a54-84888bc92068.jpg" alt="Investigación con ONG" class="w-full h-full object-cover" />
+                    <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                        <h2 class="text-white text-2xl sm:text-4xl font-bold drop-shadow-lg px-4 text-center">
+                            Investigación con ONG
+                        </h2>
+                    </div>
+                </div>
+                <div class="absolute inset-0 transition-opacity duration-700 ease-in-out opacity-0" data-carousel-item="">
+                    <img src="https://storage.googleapis.com/a1aa/image/52ec146e-18fa-4fc2-4b22-bde76267f003.jpg" alt="Fitomejoramiento" class="w-full h-full object-cover" />
+                    <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center" id="fitomejoramiento-overlay">
+                        <h2 class="text-white text-2xl sm:text-4xl font-bold drop-shadow-lg px-4 text-center select-none">
+                            Fitomejoramiento
+                        </h2>
+                    </div>
+                </div>
+                <div class="absolute inset-0 transition-opacity duration-700 ease-in-out opacity-0" data-carousel-item="">
+                    <img src="https://storage.googleapis.com/a1aa/image/bbfdf398-ba34-4073-d181-ad22223184cc.jpg" alt="Manufacturado en Laboratorios" class="w-full h-full object-cover" />
+                    <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                        <h2 class="text-white text-2xl sm:text-4xl font-bold drop-shadow-lg px-4 text-center">
+                            Manufacturado en Laboratorios
+                        </h2>
+                    </div>
+                </div>
+            </div>
+            <button aria-label="Anterior" class="absolute top-1/2 left-2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-75 text-white rounded-full p-2 focus:outline-none focus:ring-2 focus:ring-white" id="prevBtn">
+                <i class="fas fa-chevron-left text-lg"></i>
+            </button>
+            <button aria-label="Siguiente" class="absolute top-1/2 right-2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-75 text-white rounded-full p-2 focus:outline-none focus:ring-2 focus:ring-white" id="nextBtn">
+                <i class="fas fa-chevron-right text-lg"></i>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="max-w-7xl mx-auto px-6 py-16 md:py-24 bg-white" id="about">
+    <div class="text-center max-w-3xl mx-auto">
+        <h2 class="text-3xl font-extrabold text-green-600 mb-4">Nosotros</h2>
+        <p class="text-gray-700 text-lg leading-relaxed">
+            Somos una empresa dedicada a la investigación, producción y distribución de productos medicinales a base de cannabis. Nuestro compromiso es ofrecer soluciones naturales y seguras para el bienestar de nuestros clientes, promoviendo la salud integral y el conocimiento responsable.
+        </p>
+    </div>
+    <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div tabindex="0" class="bg-green-50 rounded-lg p-6 shadow-md flex flex-col items-center text-center cursor-pointer transition hover:bg-green-200 focus:bg-green-200" role="button" aria-haspopup="dialog" aria-controls="investigation-modal" aria-expanded="false">
+            <img src="https://storage.googleapis.com/a1aa/image/6f794ea5-295d-4b25-95e2-803fcd013ce8.jpg" alt="Investigación con ONGs" class="w-24 h-24 rounded-full object-cover mb-4" />
+            <h3 class="text-xl font-semibold text-green-600 mb-2">Investigación con ONGs</h3>
+            <p class="text-gray-700">Contamos con un equipo de expertos que estudian las propiedades terapéuticas del cannabis para desarrollar productos efectivos y seguros.</p>
+        </div>
+        <div tabindex="0" class="bg-green-50 rounded-lg p-6 shadow-md flex flex-col items-center text-center cursor-pointer transition hover:bg-green-200 focus:bg-green-200" role="button" aria-haspopup="dialog" aria-controls="phytobreeding-modal" aria-expanded="false">
+            <img src="https://storage.googleapis.com/a1aa/image/5152ec04-f547-41c3-db6b-0775ee77a5f0.jpg" alt="Fitomejoramiento" class="w-24 h-24 rounded-full object-cover mb-4" />
+            <h3 class="text-xl font-semibold text-green-600 mb-2">Fitomejoramiento</h3>
+            <p class="text-gray-700">Nuestros cultivos se realizan bajo estrictos controles de calidad para garantizar la pureza y potencia de cada planta.</p>
+        </div>
+        <div tabindex="0" class="bg-green-50 rounded-lg p-6 shadow-md flex flex-col items-center text-center cursor-pointer transition hover:bg-green-200 focus:bg-green-200" role="button" aria-haspopup="dialog" aria-controls="manufacturing-modal" aria-expanded="false">
+            <img src="https://storage.googleapis.com/a1aa/image/24f506c8-9915-487b-fdbc-a7bc2bfefd10.jpg" alt="Manufacturación en lab" class="w-24 h-24 rounded-full object-cover mb-4" />
+            <h3 class="text-xl font-semibold text-green-600 mb-2">Manufacturación en lab</h3>
+            <p class="text-gray-700">Entregamos nuestros productos a farmacias y centros de salud, asegurando un acceso responsable y legal.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Products Section -->
+<section class="max-w-7xl mx-auto px-6 py-16 md:py-24 bg-green-50" id="products">
+    <h2 class="text-3xl font-extrabold text-green-600 text-center mb-12">Productos</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+        {% for producto in productos %}
+        <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+            <img src="{{ producto.imagen_url }}" alt="{{ producto.nombre }}" class="w-full h-48 object-cover" />
+            <div class="p-6 flex flex-col flex-grow">
+                <h3 class="text-xl font-semibold text-green-600 mb-2">{{ producto.nombre }}</h3>
+                <p class="text-gray-700 flex-grow">{{ producto.descripcion }}</p>
+                <div class="mt-4">
+                    <span class="text-green-600 font-bold text-lg">${{ producto.precio }} ARS</span>
+                </div>
+                <a href="{% url 'core:carrito' producto.id %}" class="mt-6 bg-green-700 text-white py-2 rounded-md font-semibold hover:bg-green-800 transition text-center">
+                    Comprar
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-gray-700">No hay productos disponibles en este momento.</p>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- News Section -->
+<section class="max-w-7xl mx-auto px-6 py-16 md:py-24 bg-white" id="news">
+    <h2 class="text-3xl font-extrabold text-green-600 text-center mb-12">Noticias</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+        <article class="bg-green-50 rounded-lg shadow-md overflow-hidden flex flex-col">
+            <img src="https://storage.googleapis.com/a1aa/image/9989e41d-f486-4894-9f90-97e42a9363f5.jpg" alt="Talleres comunitarios" class="w-full h-48 object-cover" />
+            <div class="p-6 flex flex-col flex-grow">
+                <h3 class="text-xl font-semibold text-green-800 mb-2">Talleres comunitarios sobre terapias con cannabis</h3>
+                <p class="text-gray-700 flex-grow">Organizamos talleres para educar sobre el uso responsable y beneficios del cannabis medicinal.</p>
+                <time class="mt-4 text-sm text-green-700 font-semibold" datetime="2024-04-10">10 de Abril, 2024</time>
+            </div>
+        </article>
+        <article class="bg-green-50 rounded-lg shadow-md overflow-hidden flex flex-col">
+            <img src="https://storage.googleapis.com/a1aa/image/0bac36c0-a52c-421e-a2d1-592d8e4089b5.jpg" alt="Historias de pacientes" class="w-full h-48 object-cover" />
+            <div class="p-6 flex flex-col flex-grow">
+                <h3 class="text-xl font-semibold text-green-800 mb-2">Historias de pacientes y testimonios</h3>
+                <p class="text-gray-700 flex-grow">Conoce las experiencias reales de quienes han mejorado su salud con nuestros productos.</p>
+                <time class="mt-4 text-sm text-green-700 font-semibold" datetime="2024-03-25">25 de Marzo, 2024</time>
+            </div>
+        </article>
+        <article class="bg-green-50 rounded-lg shadow-md overflow-hidden flex flex-col">
+            <img src="https://storage.googleapis.com/a1aa/image/832527e8-a271-4816-5167-94c3600ab44e.jpg" alt="Conferencia internacional" class="w-full h-48 object-cover" />
+            <div class="p-6 flex flex-col flex-grow">
+                <h3 class="text-xl font-semibold text-green-800 mb-2">Conferencia internacional de cannabis 2024</h3>
+                <p class="text-gray-700 flex-grow">Participamos en el evento más importante del sector para compartir avances y establecer alianzas.</p>
+                <time class="mt-4 text-sm text-green-700 font-semibold" datetime="2024-03-10">10 de Marzo, 2024</time>
+            </div>
+        </article>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="max-w-7xl mx-auto px-6 py-16 md:py-24 bg-green-100" id="contact">
+    <h2 class="text-3xl font-extrabold text-green-600 text-center mb-12">Contacto</h2>
+    <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
+        <form action="#" method="POST" class="bg-white rounded-lg shadow-md p-8 flex flex-col">
+            <label for="name" class="text-green-700 font-semibold mb-2">Nombre</label>
+            <input type="text" id="name" name="name" placeholder="Tu nombre completo" required class="mb-6 px-4 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600" />
+            <label for="email" class="text-green-700 font-semibold mb-2">Correo electrónico</label>
+            <input type="email" id="email" name="email" placeholder="tuemail@ejemplo.com" required class="mb-6 px-4 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600" />
+            <label for="message" class="text-green-700 font-semibold mb-2">Mensaje</label>
+            <textarea id="message" name="message" rows="5" placeholder="Escribe tu mensaje aquí" required class="mb-6 px-4 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"></textarea>
+            <button type="submit" class="bg-green-700 text-white py-3 rounded-md font-semibold hover:bg-green-800 transition">Enviar</button>
+        </form>
+        <div class="bg-white rounded-lg shadow-md p-8 flex flex-col justify-center">
+            <h3 class="text-2xl font-semibold text-green-800 mb-6">Información de contacto</h3>
+            <p class="text-gray-700 mb-4 flex items-center gap-3"><i class="fas fa-map-marker-alt text-green-700"></i> SANTA FE , 3000</p>
+            <p class="text-gray-700 mb-4 flex items-center gap-3"><i class="fas fa-phone-alt text-green-700"></i> +54 342 111 111 11</p>
+            <p class="text-gray-700 mb-4 flex items-center gap-3"><i class="fas fa-envelope text-green-700"></i> contacto@organishops.com.ar</p>
+            <div class="flex space-x-6 mt-6">
+                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="text-green-700 hover:text-green-900 transition text-2xl"><i class="fab fa-facebook-square"></i></a>
+                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter" class="text-green-700 hover:text-green-900 transition text-2xl"><i class="fab fa-twitter-square"></i></a>
+                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="text-green-700 hover:text-green-900 transition text-2xl"><i class="fab fa-instagram-square"></i></a>
+                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="text-green-700 hover:text-green-900 transition text-2xl"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Carousel logic
+    const items = document.querySelectorAll('[data-carousel-item]');
+    const totalItems = items.length;
+    let currentIndex = 0;
+
+    const showItem = (index) => {
+        items.forEach((item, i) => {
+            item.style.opacity = i === index ? '1' : '0';
+            item.style.zIndex = i === index ? '10' : '0';
+        });
+    };
+
+    document.getElementById('prevBtn').addEventListener('click', () => {
+        currentIndex = (currentIndex - 1 + totalItems) % totalItems;
+        showItem(currentIndex);
+    });
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+        currentIndex = (currentIndex + 1) % totalItems;
+        showItem(currentIndex);
+    });
+
+    // Auto slide every 5 seconds
+    let autoSlideInterval = setInterval(() => {
+        currentIndex = (currentIndex + 1) % totalItems;
+        showItem(currentIndex);
+    }, 5000);
+
+    showItem(currentIndex);
+</script>
+{% endblock %}

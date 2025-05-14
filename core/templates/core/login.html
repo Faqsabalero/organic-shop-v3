@@ -1,0 +1,37 @@
+{% extends "core/base.html" %}
+
+{% block title %}Iniciar Sesión - Organic Shops{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-green-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-lg shadow-lg">
+    <h2 class="mt-6 text-center text-3xl font-extrabold text-green-700">
+      Iniciar Sesión
+    </h2>
+    <form method="post" class="mt-8 space-y-6" novalidate>
+      {% csrf_token %}
+      <div class="rounded-md shadow-sm -space-y-px">
+        <div>
+          <label for="id_username" class="sr-only">Usuario</label>
+          {{ form.username }}
+          {% if form.username.errors %}
+            <p class="text-red-600 text-sm mt-1">{{ form.username.errors.0 }}</p>
+          {% endif %}
+        </div>
+        <div class="mt-4">
+          <label for="id_password" class="sr-only">Contraseña</label>
+          {{ form.password }}
+          {% if form.password.errors %}
+            <p class="text-red-600 text-sm mt-1">{{ form.password.errors.0 }}</p>
+          {% endif %}
+        </div>
+      </div>
+      <div>
+        <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-600 transition">
+          Entrar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

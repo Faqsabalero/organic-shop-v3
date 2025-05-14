@@ -1,0 +1,133 @@
+{% extends "core/base.html" %}
+
+{% block title %}Carrito - {{ producto.nombre }} - Organic Shops{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <!-- Header -->
+        <div class="px-6 py-4 bg-green-700">
+            <h2 class="text-2xl font-bold text-white">Detalles del Producto</h2>
+        </div>
+
+        <div class="flex flex-col md:flex-row">
+            <!-- Imagen del producto -->
+            <div class="md:w-1/2">
+                <div class="relative h-96 md:h-full">
+                    <img src="{{ producto.imagen_url }}" 
+                         alt="{{ producto.nombre }}" 
+                         class="absolute inset-0 w-full h-full object-cover">
+                </div>
+            </div>
+
+            <!-- Detalles del producto -->
+            <div class="md:w-1/2 p-8">
+                <div class="flex flex-col h-full">
+                    <!-- Información del producto -->
+                    <div class="flex-grow">
+                        <h1 class="text-3xl font-bold text-gray-900 mb-4">
+                            {{ producto.nombre }}
+                        </h1>
+                        
+                        <div class="mb-6">
+                            <span class="text-4xl font-bold text-green-700">
+                                ${{ producto.precio }} ARS
+                            </span>
+                        </div>
+
+                        <div class="prose prose-green mb-6">
+                            <p class="text-gray-600">
+                                {{ producto.descripcion }}
+                            </p>
+                        </div>
+
+                        <!-- Selector de cantidad -->
+                        <div class="mb-8">
+                            <label for="cantidad" class="block text-sm font-medium text-gray-700 mb-2">
+                                Cantidad
+                            </label>
+                            <div class="flex items-center space-x-3">
+                                <button type="button" 
+                                        class="w-10 h-10 rounded-full bg-green-100 text-green-800 flex items-center justify-center hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-green-600"
+                                        onclick="decrementQuantity()">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="number" 
+                                       id="cantidad" 
+                                       name="cantidad" 
+                                       value="1" 
+                                       min="1" 
+                                       class="w-20 text-center border-gray-300 rounded-md focus:ring-green-600 focus:border-green-600">
+                                <button type="button" 
+                                        class="w-10 h-10 rounded-full bg-green-100 text-green-800 flex items-center justify-center hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-green-600"
+                                        onclick="incrementQuantity()">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Total -->
+                        <div class="mb-8 p-4 bg-green-50 rounded-lg">
+                            <div class="flex justify-between items-center">
+                                <span class="text-lg font-semibold text-gray-700">Total:</span>
+                                <span class="text-2xl font-bold text-green-700" id="total">
+                                    ${{ producto.precio }} ARS
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botón de compra -->
+                    <div class="mt-6">
+                        <button onclick="procesarCompra()" 
+                                class="w-full bg-green-700 text-white px-6 py-4 rounded-md font-semibold text-lg hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 transition-colors flex items-center justify-center space-x-2">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>Comprar Ahora</span>
+                        </button>
+                        <p class="text-sm text-gray-500 text-center mt-2">
+                            Pago seguro a través de Mercado Pago
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function incrementQuantity() {
+    const input = document.getElementById('cantidad');
+    input.value = parseInt(input.value) + 1;
+    updateTotal();
+}
+
+function decrementQuantity() {
+    const input = document.getElementById('cantidad');
+    const newValue = parseInt(input.value) - 1;
+    if (newValue >= 1) {
+        input.value = newValue;
+        updateTotal();
+    }
+}
+
+function updateTotal() {
+    const cantidad = parseInt(document.getElementById('cantidad').value);
+    const precioUnitario = parseFloat("{{ producto.precio }}");
+    const total = cantidad * precioUnitario;
+    document.getElementById('total').textContent = `$${total.toFixed(2)} ARS`;
+}
+
+function procesarCompra() {
+    // Aquí se integraría con Mercado Pago
+    const cantidad = document.getElementById('cantidad').value;
+    alert('Redirigiendo a Mercado Pago para procesar la compra...');
+    // Implementar la redirección a Mercado Pago
+}
+
+// Actualizar total cuando se cambia manualmente la cantidad
+document.getElementById('cantidad').addEventListener('change', function(e) {
+    if (parseInt(this.value) < 1) this.value = 1;
+    updateTotal();
+});
+</script>
+{% endblock %}

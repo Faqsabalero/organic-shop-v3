@@ -1,0 +1,156 @@
+{% extends "core/base.html" %}
+
+{% block title %}Panel de Distribuidor - Organic Shops{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <!-- Header -->
+        <div class="px-6 py-4 bg-green-700">
+            <h2 class="text-2xl font-bold text-white">Mi Panel de Distribuidor</h2>
+        </div>
+
+        <!-- Resumen -->
+        <div class="p-6 bg-white border-b border-gray-200">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-green-50 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-green-700 mb-2">Total de Asignaciones</h3>
+                    <p class="text-3xl font-bold text-green-800">{{ asignaciones.count }}</p>
+                </div>
+                <div class="bg-green-50 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-green-700 mb-2">Productos Diferentes</h3>
+                    <p class="text-3xl font-bold text-green-800">{{ asignaciones.values('producto').distinct.count }}</p>
+                </div>
+                <div class="bg-green-50 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-green-700 mb-2">Última Asignación</h3>
+                    <p class="text-sm text-green-800">
+                        {% if asignaciones.first %}
+                            {{ asignaciones.first.fecha_asignacion|date:"d/m/Y H:i" }}
+                        {% else %}
+                            Sin asignaciones
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Asignaciones -->
+        <div class="p-6">
+            <h3 class="text-xl font-semibold text-green-700 mb-4">Mis Asignaciones</h3>
+            
+            <!-- Filtros -->
+            <div class="mb-6 flex flex-wrap gap-4">
+                <input type="text" 
+                       id="searchInput" 
+                       placeholder="Buscar producto..." 
+                       class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent">
+                
+                <select id="planPagoFilter" 
+                        class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600 focus:border-transparent">
+                    <option value="">Todos los planes</option>
+                    <option value="CONTADO">Contado</option>
+                    <option value="CREDITO">Crédito</option>
+                </select>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Fecha
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Producto
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Cantidad
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Plan de Pago
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Estado
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200" id="asignacionesTableBody">
+                        {% for asignacion in asignaciones %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ asignacion.fecha_asignacion|date:"d/m/Y H:i" }}
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center">
+                                    {% if asignacion.producto.imagen_url %}
+                                        <img class="h-10 w-10 rounded-full object-cover mr-3" 
+                                             src="{{ asignacion.producto.imagen_url }}" 
+                                             alt="{{ asignacion.producto.nombre }}">
+                                    {% endif %}
+                                    <div>
+                                        <div class="text-sm font-medium text-gray-900">
+                                            {{ asignacion.producto.nombre }}
+                                        </div>
+                                        <div class="text-sm text-gray-500">
+                                            ${{ asignacion.producto.precio }} ARS
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ asignacion.cantidad }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {% if asignacion.plan_pago == 'CONTADO' %}bg-green-100 text-green-800{% else %}bg-blue-100 text-blue-800{% endif %}">
+                                    {{ asignacion.get_plan_pago_display }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                    Pendiente
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">
+                                No tienes asignaciones registradas.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const planPagoFilter = document.getElementById('planPagoFilter');
+    const tbody = document.getElementById('asignacionesTableBody');
+    const rows = tbody.getElementsByTagName('tr');
+
+    function filterTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const planPago = planPagoFilter.value;
+
+        Array.from(rows).forEach(row => {
+            if (row.cells.length === 1) return; // Skip empty message row
+            
+            const productName = row.cells[1].textContent.toLowerCase();
+            const rowPlanPago = row.cells[3].textContent.trim();
+            
+            const matchesSearch = productName.includes(searchTerm);
+            const matchesPlan = !planPago || rowPlanPago.includes(planPago);
+            
+            row.style.display = matchesSearch && matchesPlan ? '' : 'none';
+        });
+    }
+
+    searchInput.addEventListener('input', filterTable);
+    planPagoFilter.addEventListener('change', filterTable);
+});
+</script>
+{% endblock %}
