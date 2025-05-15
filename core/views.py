@@ -13,8 +13,17 @@ class CustomLoginView(LoginView):
     authentication_form = CustomLoginForm
     redirect_authenticated_user = True
 
+from django.contrib.auth import logout
+from django.views.decorators.http import require_http_methods
+from django.utils.decorators import method_decorator
+
+@method_decorator(require_http_methods(['GET', 'POST']), name='dispatch')
 class CustomLogoutView(LogoutView):
     next_page = '/'
+
+    def post(self, request, *args, **kwargs):
+        logout(request)
+        return redirect('core:home')
 
 def home_view(request):
     productos = Producto.objects.all()
@@ -33,7 +42,7 @@ def asignar_view(request):
             asignacion.admin = request.user
             asignacion.save()
             messages.success(request, 'Asignación creada correctamente.')
-            return redirect('asignar')
+            return redirect('core:asignar')
         else:
             messages.error(request, 'Por favor corrija los errores en el formulario.')
     else:
