@@ -3,8 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponseForbidden
 from django.contrib import messages
+from django.db.models import Count
 from .forms import CustomLoginForm, AsignacionForm
 from .models import Producto, Asignacion
+
 
 class CustomLoginView(LoginView):
     template_name = 'core/login.html'
@@ -46,7 +48,9 @@ def distribuidor_view(request):
         return HttpResponseForbidden("No tiene permiso para acceder a esta sección.")
     
     asignaciones = Asignacion.objects.filter(distribuidor=request.user).order_by('-fecha_asignacion')
-    productos_distintos = asignaciones.values('producto').distinct().count()
+    productos_distintos = Asignacion.objects.filter(distribuidor=request.user).aggregate(
+        total=Count('producto', distinct=True)
+    )['total']
     
     return render(request, 'core/distribuidor.html', {
         'asignaciones': asignaciones,
