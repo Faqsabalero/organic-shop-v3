@@ -25,9 +25,13 @@
             
             <nav class="hidden md:flex space-x-8 font-semibold text-black">
                 <a href="{% url 'core:home' %}" class="hover:text-green-300 transition">Inicio</a>
+                <a href="#about" class="hover:text-green-300 transition">Nosotros</a>
+                <a href="#products" class="hover:text-green-300 transition">Productos</a>
+                <a href="#news" class="hover:text-green-300 transition">Noticias</a>
+                <a href="#contact" class="hover:text-green-300 transition">Contacto</a>
                 {% if user.is_authenticated %}
                     {% if user.rol == 'ADMIN' %}
-                        <a href="{% url 'core:asignar' %}" class="hover:text-green-300 transition">Panel Admin</a>
+                        <a href="{% url 'core:asignar' %}" class="hover:text-green-300 transition">Mi Panel</a>
                     {% elif user.rol == 'DISTRIBUIDOR' %}
                         <a href="{% url 'core:distribuidor' %}" class="hover:text-green-300 transition">Mi Panel</a>
                     {% endif %}
@@ -48,10 +52,22 @@
             <a href="{% url 'core:home' %}" class="block px-4 py-3 border-b border-gray-200 hover:bg-green-50 font-semibold text-green-600">
                 Inicio
             </a>
+            <a href="#about" class="block px-4 py-3 border-b border-gray-200 hover:bg-green-50 font-semibold text-green-600">
+                Nosotros
+            </a>
+            <a href="#products" class="block px-4 py-3 border-b border-gray-200 hover:bg-green-50 font-semibold text-green-600">
+                Productos
+            </a>
+            <a href="#news" class="block px-4 py-3 border-b border-gray-200 hover:bg-green-50 font-semibold text-green-600">
+                Noticias
+            </a>
+            <a href="#contact" class="block px-4 py-3 border-b border-gray-200 hover:bg-green-50 font-semibold text-green-600">
+                Contacto
+            </a>
             {% if user.is_authenticated %}
                 {% if user.rol == 'ADMIN' %}
                     <a href="{% url 'core:asignar' %}" class="block px-4 py-3 border-b border-gray-200 hover:bg-green-50 font-semibold text-green-600">
-                        Panel Admin
+                        Mi Panel
                     </a>
                 {% elif user.rol == 'DISTRIBUIDOR' %}
                     <a href="{% url 'core:distribuidor' %}" class="block px-4 py-3 border-b border-gray-200 hover:bg-green-50 font-semibold text-green-600">
