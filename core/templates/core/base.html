@@ -25,14 +25,13 @@
             
             <nav class="hidden md:flex space-x-8 font-semibold text-black">
                 <a href="{% url 'core:home' %}" class="hover:text-green-300 transition">Inicio</a>
-                <a href="#about" class="hover:text-green-300 transition">Nosotros</a>
-                <a href="#products" class="hover:text-green-300 transition">Productos</a>
-                <a href="#news" class="hover:text-green-300 transition">Noticias</a>
-                <a href="#contact" class="hover:text-green-300 transition">Contacto</a>
+                <a href="{% url 'core:home' %}#about" class="hover:text-green-300 transition">Nosotros</a>
+                <a href="{% url 'core:home' %}#products" class="hover:text-green-300 transition">Productos</a>
+                <a href="{% url 'core:home' %}#news" class="hover:text-green-300 transition">Noticias</a>
+                <a href="{% url 'core:home' %}#contact" class="hover:text-green-300 transition">Contacto</a>
                 {% if user.is_authenticated %}
                     {% if user.rol == 'ADMIN' %}
                         <a href="{% url 'core:asignar' %}" class="hover:text-green-300 transition">Mi Panel</a>
-                        <a href="{% url 'core:register' %}" class="hover:text-green-300 transition">Registrar Usuario</a>
                     {% elif user.rol == 'DISTRIBUIDOR' %}
                         <a href="{% url 'core:distribuidor' %}" class="hover:text-green-300 transition">Mi Panel</a>
                     {% endif %}
