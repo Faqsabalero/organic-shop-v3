@@ -47,3 +47,14 @@ class Asignacion(models.Model):
 
     def __str__(self):
         return f'{self.producto.nombre} - {self.distribuidor.username}'
+
+class Venta(models.Model):
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField()
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+    fecha_venta = models.DateTimeField(auto_now_add=True)
+    email_comprador = models.EmailField(null=True, blank=True)
+    estado_pago = models.CharField(max_length=20, default='PENDIENTE')
+    
+    def __str__(self):
+        return f'Venta {self.id} - {self.producto.nombre}'

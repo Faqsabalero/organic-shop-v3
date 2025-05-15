@@ -10,7 +10,23 @@
             <h2 class="text-2xl font-bold text-white">Panel de Administración</h2>
         </div>
 
-        <!-- Acciones Administrativas -->
+        <!-- Tabs -->
+        <div class="border-b border-gray-200">
+            <nav class="flex -mb-px" aria-label="Tabs">
+                <button onclick="showTab('asignaciones')" 
+                        class="tab-button w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm border-green-500 text-green-600">
+                    Asignaciones
+                </button>
+                <button onclick="showTab('ventas')" 
+                        class="tab-button w-1/2 py-4 px-1 text-center border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                    Ventas
+                </button>
+            </nav>
+        </div>
+
+        <!-- Tab Content: Asignaciones -->
+        <div id="asignacionesTab">
+            <!-- Acciones Administrativas -->
         <div class="p-6 bg-white border-b border-gray-200 flex justify-between items-center">
             <div class="flex space-x-4">
                 <button onclick="toggleAsignacionForm()" class="px-6 py-2 bg-green-700 text-white font-semibold rounded-md hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 transition flex items-center space-x-2">
@@ -157,6 +173,34 @@
                 </table>
             </div>
         </div>
+
+        <!-- Tab Content: Ventas -->
+        <div id="ventasTab" class="hidden">
+            <div class="p-6 bg-white">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <!-- Total Ventas -->
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Total Ventas</h3>
+                        <p class="text-3xl font-bold text-green-600">${{ total_ventas }}</p>
+                    </div>
+                    <!-- Cantidad Vendida -->
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Cantidad Vendida</h3>
+                        <p class="text-3xl font-bold text-blue-600">{{ cantidad_vendida }}</p>
+                    </div>
+                    <!-- Costo Total -->
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Costo Total</h3>
+                        <p class="text-3xl font-bold text-red-600">${{ costo_total }}</p>
+                    </div>
+                    <!-- Ganancia -->
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Ganancia</h3>
+                        <p class="text-3xl font-bold text-green-600">${{ ganancia }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
@@ -166,6 +210,23 @@
     function toggleAsignacionForm() {
         const form = document.getElementById('formAsignacion');
         form.classList.toggle('hidden');
+    }
+
+    function showTab(tabName) {
+        // Update tab buttons
+        document.querySelectorAll('.tab-button').forEach(button => {
+            if (button.textContent.trim().toLowerCase() === tabName) {
+                button.classList.remove('text-gray-500', 'border-transparent');
+                button.classList.add('border-green-500', 'text-green-600');
+            } else {
+                button.classList.remove('border-green-500', 'text-green-600');
+                button.classList.add('text-gray-500', 'border-transparent');
+            }
+        });
+
+        // Show/hide content
+        document.getElementById('asignacionesTab').classList.toggle('hidden', tabName !== 'asignaciones');
+        document.getElementById('ventasTab').classList.toggle('hidden', tabName !== 'ventas');
     }
 </script>
 {% endblock %}

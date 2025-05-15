@@ -44,7 +44,31 @@ def asignar_view(request):
         form = AsignacionForm()
     
     asignaciones = Asignacion.objects.all().order_by('-fecha_asignacion')
-    return render(request, 'core/asignar.html', {'form': form, 'asignaciones': asignaciones})
+
+    # Calcular datos de ventas para la pestaña "Ventas"
+    total_ventas = 0
+    cantidad_vendida = 0
+    costo_total = 0
+    ganancia = 0
+
+    ventas = Asignacion.objects.filter(estado='PAGADO')
+    for venta in ventas:
+        cantidad_vendida += venta.cantidad
+        costo_total += venta.producto.costo * venta.cantidad
+        total_ventas += venta.producto.precio * venta.cantidad
+
+    ganancia = total_ventas - costo_total
+
+    context = {
+        'form': form,
+        'asignaciones': asignaciones,
+        'total_ventas': total_ventas,
+        'cantidad_vendida': cantidad_vendida,
+        'costo_total': costo_total,
+        'ganancia': ganancia,
+    }
+
+    return render(request, 'core/asignar.html', context)
 
 @login_required
 def distribuidor_view(request):
@@ -61,10 +85,45 @@ def distribuidor_view(request):
         'productos_distintos': productos_distintos
     })
 
-@login_required
+from decimal import Decimal
+from django.http import JsonResponse
+
 def carrito_view(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
     return render(request, 'core/carrito.html', {'producto': producto})
+
+def procesar_compra(request, producto_id):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
+    
+    try:
+        producto = get_object_or_404(Producto, id=producto_id)
+        cantidad = int(request.POST.get('cantidad', 1))
+        email = request.POST.get('email', '')
+        
+        if cantidad < 1:
+            return JsonResponse({'error': 'Cantidad inválida'}, status=400)
+        
+        total = Decimal(producto.precio) * Decimal(cantidad)
+        
+        # Crear la venta
+        venta = Venta.objects.create(
+            producto=producto,
+            cantidad=cantidad,
+            total=total,
+            email_comprador=email
+        )
+        
+        # Aquí se integraría con Mercado Pago
+        # Por ahora solo retornamos éxito
+        return JsonResponse({
+            'success': True,
+            'message': 'Venta procesada correctamente',
+            'venta_id': venta.id
+        })
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
 
 @login_required
 def cambiar_estado_asignacion(request, asignacion_id):
