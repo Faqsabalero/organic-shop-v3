@@ -4,7 +4,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponseForbidden
 from django.contrib import messages
 from django.db.models import Count
-from .forms import CustomLoginForm, AsignacionForm
+from .forms import CustomLoginForm, AsignacionForm, UserCreationFormWithRol
 from .models import Producto, Asignacion
 
 
@@ -61,3 +61,19 @@ def distribuidor_view(request):
 def carrito_view(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
     return render(request, 'core/carrito.html', {'producto': producto})
+
+@login_required
+def register_user(request):
+    if request.user.rol != 'ADMIN':
+        return HttpResponseForbidden("No tiene permiso para registrar usuarios.")
+        
+    if request.method == 'POST':
+        form = UserCreationFormWithRol(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Usuario creado exitosamente.')
+            return redirect('core:asignar')
+    else:
+        form = UserCreationFormWithRol()
+    
+    return render(request, 'core/register.html', {'form': form})

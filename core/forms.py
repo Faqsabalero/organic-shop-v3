@@ -20,10 +20,10 @@ class CustomLoginForm(AuthenticationForm):
         )
     )
 
-class DistribuidorCreationForm(UserCreationForm):
+class UserCreationFormWithRol(UserCreationForm):
     class Meta:
         model = CustomUser
-        fields = ('username', 'email', 'password1', 'password2')
+        fields = ('username', 'email', 'rol', 'password1', 'password2')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -32,13 +32,6 @@ class DistribuidorCreationForm(UserCreationForm):
             self.fields[field].widget.attrs.update({
                 'class': 'w-full px-4 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600'
             })
-        
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.rol = 'DISTRIBUIDOR'
-        if commit:
-            user.save()
-        return user
 
 class AsignacionForm(forms.ModelForm):
     class Meta:

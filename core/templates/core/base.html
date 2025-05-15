@@ -32,15 +32,16 @@
                 {% if user.is_authenticated %}
                     {% if user.rol == 'ADMIN' %}
                         <a href="{% url 'core:asignar' %}" class="hover:text-green-300 transition">Mi Panel</a>
+                        <a href="{% url 'core:register' %}" class="hover:text-green-300 transition">Registrar Usuario</a>
                     {% elif user.rol == 'DISTRIBUIDOR' %}
                         <a href="{% url 'core:distribuidor' %}" class="hover:text-green-300 transition">Mi Panel</a>
                     {% endif %}
-                    <div class="relative group">
-                        <button class="flex items-center space-x-1 hover:text-green-300 transition">
+                    <div class="relative inline-block">
+                        <button class="flex items-center space-x-1 hover:text-green-300 transition" onclick="toggleUserMenu()">
                             <span>{{ user.username }}</span>
-                            <i class="fas fa-chevron-down text-sm"></i>
+                            <i class="fas fa-user"></i>
                         </button>
-                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden group-hover:block">
+                        <div id="userMenu" class="absolute right-0 w-48 bg-white rounded-md shadow-lg py-1 mt-2 z-50 hidden">
                             <div class="px-4 py-2 border-b border-gray-200">
                                 <p class="text-sm text-gray-700">Conectado como:</p>
                                 <p class="text-sm font-medium text-gray-900">{{ user.email }}</p>
@@ -87,10 +88,13 @@
                 Contacto
             </a>
             {% if user.is_authenticated %}
-                {% if user.rol == 'ADMIN' %}
-                    <a href="{% url 'core:asignar' %}" class="block px-4 py-3 border-b border-gray-200 hover:bg-green-50 font-semibold text-green-600">
-                        Mi Panel
-                    </a>
+                    {% if user.rol == 'ADMIN' %}
+                        <a href="{% url 'core:asignar' %}" class="block px-4 py-3 border-b border-gray-200 hover:bg-green-50 font-semibold text-green-600">
+                            Mi Panel
+                        </a>
+                        <a href="{% url 'core:register' %}" class="block px-4 py-3 border-b border-gray-200 hover:bg-green-50 font-semibold text-green-600">
+                            Registrar Usuario
+                        </a>
                 {% elif user.rol == 'DISTRIBUIDOR' %}
                     <a href="{% url 'core:distribuidor' %}" class="block px-4 py-3 border-b border-gray-200 hover:bg-green-50 font-semibold text-green-600">
                         Mi Panel
@@ -162,6 +166,22 @@
 
         mobileMenuButton.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
+        });
+
+        // User menu toggle
+        function toggleUserMenu() {
+            const menu = document.getElementById('userMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('userMenu');
+            const button = event.target.closest('button');
+            
+            if (!button && !menu.classList.contains('hidden')) {
+                menu.classList.add('hidden');
+            }
         });
     </script>
     {% block extra_scripts %}{% endblock %}

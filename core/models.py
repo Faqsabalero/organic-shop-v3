@@ -8,6 +8,11 @@ class CustomUser(AbstractUser):
     )
     rol = models.CharField(max_length=20, choices=ROL_CHOICES, default='DISTRIBUIDOR')
 
+    def save(self, *args, **kwargs):
+        if self.is_superuser:
+            self.rol = 'ADMIN'
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.username
 
