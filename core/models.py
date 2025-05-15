@@ -22,8 +22,10 @@ class Producto(models.Model):
 
 class Asignacion(models.Model):
     PLAN_PAGO_CHOICES = (
-        ('CONTADO', 'Contado'),
-        ('CREDITO', 'Crédito'),
+        ('1', 'Cuota 1'),
+        ('2', 'Cuota 2'),
+        ('3', 'Cuota 3'),
+        ('4', 'Cuota 4'),
     )
     admin = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='asignaciones_admin')
     distribuidor = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='asignaciones_distribuidor')
