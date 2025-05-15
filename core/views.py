@@ -46,7 +46,12 @@ def distribuidor_view(request):
         return HttpResponseForbidden("No tiene permiso para acceder a esta sección.")
     
     asignaciones = Asignacion.objects.filter(distribuidor=request.user).order_by('-fecha_asignacion')
-    return render(request, 'core/distribuidor.html', {'asignaciones': asignaciones})
+    productos_distintos = asignaciones.values('producto').distinct().count()
+    
+    return render(request, 'core/distribuidor.html', {
+        'asignaciones': asignaciones,
+        'productos_distintos': productos_distintos
+    })
 
 @login_required
 def carrito_view(request, producto_id):
