@@ -1,9 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth import logout
 from django.http import HttpResponseForbidden
 from django.contrib import messages
 from django.db.models import Count
+from django.views.decorators.http import require_http_methods
+from django.utils.decorators import method_decorator
 from .forms import CustomLoginForm, AsignacionForm, UserCreationFormWithRol
 from .models import Producto, Asignacion
 
@@ -13,17 +16,9 @@ class CustomLoginView(LoginView):
     authentication_form = CustomLoginForm
     redirect_authenticated_user = True
 
-from django.contrib.auth import logout
-from django.views.decorators.http import require_http_methods
-from django.utils.decorators import method_decorator
 
-@method_decorator(require_http_methods(['GET', 'POST']), name='dispatch')
 class CustomLogoutView(LogoutView):
-    next_page = '/'
-
-    def post(self, request, *args, **kwargs):
-        logout(request)
-        return redirect('core:home')
+    next_page = 'core:home'
 
 def home_view(request):
     productos = Producto.objects.all()
@@ -70,6 +65,18 @@ def distribuidor_view(request):
 def carrito_view(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
     return render(request, 'core/carrito.html', {'producto': producto})
+
+@login_required
+def cambiar_estado_asignacion(request, asignacion_id):
+    if request.user.rol != 'ADMIN':
+        return HttpResponseForbidden("No tiene permiso para cambiar el estado.")
+    
+    asignacion = get_object_or_404(Asignacion, id=asignacion_id)
+    asignacion.estado = 'PAGADO' if asignacion.estado == 'PENDIENTE' else 'PENDIENTE'
+    asignacion.save()
+    
+    messages.success(request, f'Estado actualizado a {asignacion.get_estado_display()}')
+    return redirect('core:asignar')
 
 @login_required
 def register_user(request):

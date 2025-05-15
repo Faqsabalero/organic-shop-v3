@@ -32,12 +32,18 @@ class Asignacion(models.Model):
         ('3', 'Cuota 3'),
         ('4', 'Cuota 4'),
     )
+    
+    ESTADO_CHOICES = (
+        ('PENDIENTE', 'Pendiente'),
+        ('PAGADO', 'Pagado'),
+    )
     admin = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='asignaciones_admin')
     distribuidor = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='asignaciones_distribuidor')
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField()
     fecha_asignacion = models.DateTimeField(auto_now_add=True)
     plan_pago = models.CharField(max_length=20, choices=PLAN_PAGO_CHOICES)
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='PENDIENTE')
 
     def __str__(self):
         return f'{self.producto.nombre} - {self.distribuidor.username}'
