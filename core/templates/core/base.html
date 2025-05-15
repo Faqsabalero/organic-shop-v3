@@ -35,7 +35,29 @@
                     {% elif user.rol == 'DISTRIBUIDOR' %}
                         <a href="{% url 'core:distribuidor' %}" class="hover:text-green-300 transition">Mi Panel</a>
                     {% endif %}
-                    <a href="{% url 'core:logout' %}" class="hover:text-green-300 transition">Cerrar Sesión</a>
+                    <div class="relative group">
+                        <button class="flex items-center space-x-1 hover:text-green-300 transition">
+                            <span>{{ user.username }}</span>
+                            <i class="fas fa-chevron-down text-sm"></i>
+                        </button>
+                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden group-hover:block">
+                            <div class="px-4 py-2 border-b border-gray-200">
+                                <p class="text-sm text-gray-700">Conectado como:</p>
+                                <p class="text-sm font-medium text-gray-900">{{ user.email }}</p>
+                            </div>
+                            {% if user.rol %}
+                            <div class="px-4 py-2 border-b border-gray-200">
+                                <p class="text-xs text-gray-500">Rol:</p>
+                                <p class="text-sm font-medium text-gray-900">{{ user.get_rol_display }}</p>
+                            </div>
+                            {% endif %}
+                            <a href="{% url 'core:logout' %}" 
+                               class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition flex items-center space-x-2">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Cerrar Sesión</span>
+                            </a>
+                        </div>
+                    </div>
                 {% else %}
                     <a href="{% url 'core:login' %}" class="hover:text-green-300 transition">Iniciar Sesión</a>
                 {% endif %}
@@ -74,9 +96,23 @@
                         Mi Panel
                     </a>
                 {% endif %}
-                <a href="{% url 'core:logout' %}" class="block px-4 py-3 hover:bg-green-50 font-semibold text-green-600">
-                    Cerrar Sesión
-                </a>
+                <div class="border-t border-gray-200">
+                    <div class="px-4 py-3 bg-gray-50">
+                        <p class="text-sm text-gray-700">Conectado como:</p>
+                        <p class="text-sm font-medium text-gray-900">{{ user.email }}</p>
+                    </div>
+                    {% if user.rol %}
+                    <div class="px-4 py-3 bg-gray-50 border-t border-gray-200">
+                        <p class="text-xs text-gray-500">Rol:</p>
+                        <p class="text-sm font-medium text-gray-900">{{ user.get_rol_display }}</p>
+                    </div>
+                    {% endif %}
+                    <a href="{% url 'core:logout' %}" 
+                       class="block px-4 py-3 text-red-600 hover:bg-red-50 font-semibold transition flex items-center space-x-2">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Cerrar Sesión</span>
+                    </a>
+                </div>
             {% else %}
                 <a href="{% url 'core:login' %}" class="block px-4 py-3 hover:bg-green-50 font-semibold text-green-600">
                     Iniciar Sesión
