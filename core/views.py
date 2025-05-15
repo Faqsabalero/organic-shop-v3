@@ -87,10 +87,77 @@ def distribuidor_view(request):
 
 from decimal import Decimal
 from django.http import JsonResponse
+from django.conf import settings
+import mercadopago
 
 def carrito_view(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
-    return render(request, 'core/carrito.html', {'producto': producto})
+    sdk = mercadopago.SDK(settings.MERCADOPAGO_ACCESS_TOKEN)
+    
+    cantidad = int(request.GET.get('cantidad', 1))
+    preference_data = {
+        "items": [
+            {
+                "title": producto.nombre,
+                "quantity": cantidad,
+                "currency_id": "ARS",
+                "unit_price": float(producto.precio),
+                "description": producto.descripcion[:100],  # Limitamos la descripción a 100 caracteres
+                "picture_url": producto.imagen_url
+            }
+        ],
+        "back_urls": {
+            "success": request.build_absolute_uri('/pago-exitoso/'),
+            "failure": request.build_absolute_uri('/pago-fallido/'),
+            "pending": request.build_absolute_uri('/pago-pendiente/')
+        },
+        "auto_return": "approved",
+    }
+    
+    preference_response = sdk.preference().create(preference_data)
+    preference = preference_response["response"]
+    
+    return render(request, 'core/carrito.html', {
+        'producto': producto,
+        'preference_id': preference['id'],
+        'public_key': settings.MERCADOPAGO_PUBLIC_KEY,
+    })
+
+def pago_exitoso(request):
+    payment_id = request.GET.get('payment_id')
+    status = request.GET.get('status')
+    merchant_order_id = request.GET.get('merchant_order_id')
+    
+    if status == 'approved':
+        # Obtener detalles del pago usando el SDK de Mercado Pago
+        sdk = mercadopago.SDK(settings.MERCADOPAGO_ACCESS_TOKEN)
+        payment_info = sdk.payment().get(payment_id)
+        
+        if payment_info["status"] == 200:
+            payment_data = payment_info["response"]
+            
+            # Crear registro de venta
+            venta = Venta.objects.create(
+                producto_id=payment_data["additional_info"]["items"][0]["id"],
+                cantidad=payment_data["additional_info"]["items"][0]["quantity"],
+                total=Decimal(str(payment_data["transaction_amount"])),
+                email_comprador=payment_data.get("payer", {}).get("email"),
+                estado_pago='PAGADO'
+            )
+            
+            messages.success(request, '¡Pago realizado con éxito! Número de orden: {}'.format(merchant_order_id))
+        else:
+            messages.warning(request, 'El pago fue aprobado pero no pudimos procesar la venta.')
+    
+    return redirect('core:home')
+
+def pago_fallido(request):
+    messages.error(request, 'El pago no pudo ser procesado.')
+    return redirect('core:home')
+
+def pago_pendiente(request):
+    messages.info(request, 'El pago está pendiente de confirmación.')
+    return redirect('core:home')
 
 def procesar_compra(request, producto_id):
     if request.method != 'POST':

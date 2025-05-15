@@ -146,3 +146,7 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Mercado Pago Settings
+MERCADOPAGO_PUBLIC_KEY = 'TEST-0000000-000000-000000-000000'  # Reemplazar con tu clave pública
+MERCADOPAGO_ACCESS_TOKEN = 'TEST-0000000-000000-000000-000000'  # Reemplazar con tu token de acceso

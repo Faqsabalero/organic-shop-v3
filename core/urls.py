@@ -14,4 +14,7 @@ urlpatterns = [
     path('register/', views.register_user, name='register'),
     path('cambiar-estado/<int:asignacion_id>/', views.cambiar_estado_asignacion, name='cambiar_estado'),
     path('editar-producto/<int:producto_id>/', views.editar_producto, name='editar_producto'),
+    path('pago-exitoso/', views.pago_exitoso, name='pago_exitoso'),
+    path('pago-fallido/', views.pago_fallido, name='pago_fallido'),
+    path('pago-pendiente/', views.pago_pendiente, name='pago_pendiente'),
 ]

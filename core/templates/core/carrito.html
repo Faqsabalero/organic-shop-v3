@@ -85,79 +85,76 @@
                         </div>
                     </div>
 
-                        <!-- Botón de compra -->
-                        <div class="mt-6">
-                            <button onclick="procesarCompra()" 
-                                    class="w-full bg-green-700 text-white px-6 py-4 rounded-md font-semibold text-lg hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 transition-colors flex items-center justify-center space-x-2">
-                                <i class="fas fa-shopping-cart"></i>
-                                <span>Comprar Ahora</span>
-                            </button>
-                            <p class="text-sm text-gray-500 text-center mt-2">
-                                Pago seguro a través de Mercado Pago
-                            </p>
-                        </div>
+                    <!-- Botón de compra Mercado Pago -->
+                    <div class="mt-6">
+                        <div id="wallet_container"></div>
+                        <p class="text-sm text-gray-500 text-center mt-2">
+                            Pago seguro a través de Mercado Pago
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- SDK MercadoPago.js -->
+<script src="https://sdk.mercadopago.com/js/v2"></script>
 <script>
-function incrementQuantity() {
-    const input = document.getElementById('cantidad');
-    input.value = parseInt(input.value) + 1;
-    updateTotal();
-}
+    const mp = new MercadoPago('{{ public_key }}', {
+        locale: 'es-AR'
+    });
 
-function decrementQuantity() {
-    const input = document.getElementById('cantidad');
-    const newValue = parseInt(input.value) - 1;
-    if (newValue >= 1) {
-        input.value = newValue;
+    function incrementQuantity() {
+        const input = document.getElementById('cantidad');
+        input.value = parseInt(input.value) + 1;
         updateTotal();
     }
-}
 
-function updateTotal() {
-    const cantidad = parseInt(document.getElementById('cantidad').value);
-    const precioUnitario = parseFloat("{{ producto.precio }}");
-    const total = cantidad * precioUnitario;
-    document.getElementById('total').textContent = `$${total.toFixed(2)} ARS`;
-}
-
-function procesarCompra() {
-    // Aquí se integraría con Mercado Pago
-    const cantidad = document.getElementById('cantidad').value;
-    const email = document.getElementById('email').value;
-    fetch("{% url 'core:procesar_compra' producto.id %}", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': '{{ csrf_token }}'
-        },
-        body: new URLSearchParams({
-            'cantidad': cantidad,
-            'email': email
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Compra procesada correctamente. ID de venta: ' + data.venta_id);
-            // Aquí se puede redirigir o mostrar confirmación
-        } else {
-            alert('Error: ' + data.error);
+    function decrementQuantity() {
+        const input = document.getElementById('cantidad');
+        const newValue = parseInt(input.value) - 1;
+        if (newValue >= 1) {
+            input.value = newValue;
+            updateTotal();
         }
-    })
-    .catch(error => {
-        alert('Error al procesar la compra.');
-    });
-}
+    }
 
-// Actualizar total cuando se cambia manualmente la cantidad
-document.getElementById('cantidad').addEventListener('change', function(e) {
-    if (parseInt(this.value) < 1) this.value = 1;
-    updateTotal();
-});
+    function updateTotal() {
+        const cantidad = parseInt(document.getElementById('cantidad').value);
+        const precioUnitario = parseFloat("{{ producto.precio }}");
+        const total = cantidad * precioUnitario;
+        document.getElementById('total').textContent = `$${total.toFixed(2)} ARS`;
+        
+        // Actualizar preferencia de pago con la nueva cantidad
+        const walletContainer = document.getElementById('wallet_container');
+        walletContainer.innerHTML = ''; // Limpiar el contenedor actual
+        
+        // Crear nueva preferencia con la cantidad actualizada
+        mp.bricks().create("wallet", "wallet_container", {
+            initialization: {
+                preferenceId: '{{ preference_id }}',
+                quantity: cantidad
+            },
+        });
+    }
+
+    // Actualizar total cuando se cambia manualmente la cantidad
+    document.getElementById('cantidad').addEventListener('change', function(e) {
+        if (parseInt(this.value) < 1) this.value = 1;
+        updateTotal();
+        
+        // Recargar la página con la nueva cantidad
+        const url = new URL(window.location.href);
+        url.searchParams.set('cantidad', this.value);
+        window.location.href = url.toString();
+    });
+
+    // Crear botón de pago
+    mp.bricks().create("wallet", "wallet_container", {
+        initialization: {
+            preferenceId: '{{ preference_id }}',
+        },
+    });
 </script>
 {% endblock %}
