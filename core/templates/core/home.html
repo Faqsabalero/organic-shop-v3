@@ -165,6 +165,61 @@
     </div>
 </section>
 
+<!-- Modales -->
+<div aria-hidden="true" aria-labelledby="investigation-modal-title" aria-modal="true" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden" id="investigation-modal" role="dialog">
+   <div class="bg-white rounded-lg max-w-lg w-full p-6 relative shadow-lg">
+    <button aria-label="Close modal" class="absolute top-4 right-4 text-gray-600 hover:text-gray-900 focus:outline-none" id="investigation-modal-close" type="button">
+     <i class="fas fa-times fa-lg"></i>
+    </button>
+    <h3 class="text-2xl font-bold text-green-700 mb-4" id="investigation-modal-title" tabindex="0">
+     Investigación con ONGs
+    </h3>
+    <img alt="Research lab with scientists analyzing cannabis plants under microscopes and lab equipment" class="w-32 h-32 rounded-full object-cover mb-4 mx-auto" height="128" src="https://storage.googleapis.com/a1aa/image/6f794ea5-295d-4b25-95e2-803fcd013ce8.jpg" width="128"/>
+    <p class="text-gray-700 mb-4">
+     Contamos con un equipo de expertos que estudian las propiedades terapéuticas del cannabis para desarrollar productos efectivos y seguros. Nuestra investigación se realiza en colaboración con diversas ONGs para garantizar un enfoque ético y responsable.
+    </p>
+    <p class="text-gray-700">
+     Además, participamos en proyectos comunitarios y educativos para difundir el conocimiento sobre los beneficios del cannabis medicinal y promover su uso seguro y legal.
+    </p>
+   </div>
+  </div>
+
+  <div aria-hidden="true" aria-labelledby="phytobreeding-modal-title" aria-modal="true" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden" id="phytobreeding-modal" role="dialog">
+   <div class="bg-white rounded-lg max-w-lg w-full p-6 relative shadow-lg">
+    <button aria-label="Close modal" class="absolute top-4 right-4 text-gray-600 hover:text-gray-900 focus:outline-none" id="phytobreeding-modal-close" type="button">
+     <i class="fas fa-times fa-lg"></i>
+    </button>
+    <h3 class="text-2xl font-bold text-green-700 mb-4" id="phytobreeding-modal-title" tabindex="0">
+     Fitomejoramiento
+    </h3>
+    <img alt="Greenhouse with cannabis plants growing under controlled environment with sunlight and irrigation" class="w-32 h-32 rounded-full object-cover mb-4 mx-auto" height="128" src="https://storage.googleapis.com/a1aa/image/5152ec04-f547-41c3-db6b-0775ee77a5f0.jpg" width="128"/>
+    <p class="text-gray-700 mb-4">
+     Nuestros cultivos se realizan bajo estrictos controles de calidad para garantizar la pureza y potencia de cada planta. Utilizamos técnicas avanzadas de fitomejoramiento para optimizar las características terapéuticas y la resistencia de las plantas.
+    </p>
+    <p class="text-gray-700">
+     Además, trabajamos en colaboración con expertos para asegurar que cada cultivo cumpla con los más altos estándares de calidad y sostenibilidad.
+    </p>
+   </div>
+  </div>
+
+  <div aria-hidden="true" aria-labelledby="manufacturing-modal-title" aria-modal="true" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden" id="manufacturing-modal" role="dialog">
+   <div class="bg-white rounded-lg max-w-lg w-full p-6 relative shadow-lg">
+    <button aria-label="Close modal" class="absolute top-4 right-4 text-gray-600 hover:text-gray-900 focus:outline-none" id="manufacturing-modal-close" type="button">
+     <i class="fas fa-times fa-lg"></i>
+    </button>
+    <h3 class="text-2xl font-bold text-green-700 mb-4" id="manufacturing-modal-title" tabindex="0">
+     Manufacturacion en lab
+    </h3>
+    <img alt="Packaging and distribution of medicinal cannabis products with eco-friendly materials" class="w-32 h-32 rounded-full object-cover mb-4 mx-auto" height="128" src="https://storage.googleapis.com/a1aa/image/24f506c8-9915-487b-fdbc-a7bc2bfefd10.jpg" width="128"/>
+    <p class="text-gray-700 mb-4">
+     Entregamos nuestros productos a farmacias y centros de salud, asegurando un acceso responsable y legal. Nuestro proceso de manufactura cumple con estrictas normas de calidad y seguridad.
+    </p>
+    <p class="text-gray-700">
+     Trabajamos con materiales eco-amigables y procesos sostenibles para minimizar el impacto ambiental y garantizar la eficacia de nuestros productos.
+    </p>
+   </div>
+  </div>
+
 <script>
     // Carousel logic
     const items = document.querySelectorAll('[data-carousel-item]');
@@ -195,5 +250,53 @@
     }, 5000);
 
     showItem(currentIndex);
+
+    // Modal logic
+    document.addEventListener('DOMContentLoaded', function() {
+        // Función para mostrar el modal
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('hidden');
+            }
+        }
+        
+        // Función para cerrar el modal
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
+        
+        // Asignar eventos a las tarjetas (basado en aria-controls)
+        const modalTriggers = document.querySelectorAll('[aria-controls]');
+        modalTriggers.forEach(trigger => {
+            trigger.addEventListener('click', function() {
+                const modalId = trigger.getAttribute('aria-controls');
+                openModal(modalId);
+            });
+        });
+        
+        // Asignar eventos a los botones de cierre de cada modal
+        const closeButtons = document.querySelectorAll('button[id$="-close"]');
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const modalId = button.id.replace('-close', '');
+                closeModal(modalId);
+            });
+        });
+        
+        // Opcional: Cerrar modal al presionar ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                document.querySelectorAll('[aria-modal="true"]').forEach(modal => {
+                    if (!modal.classList.contains('hidden')) {
+                        modal.classList.add('hidden');
+                    }
+                });
+            }
+        });
+    });
 </script>
 {% endblock %}
