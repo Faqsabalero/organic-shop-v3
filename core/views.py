@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.db.models import Count
 from django.views.decorators.http import require_http_methods
 from django.utils.decorators import method_decorator
-from .forms import CustomLoginForm, AsignacionForm, UserCreationFormWithRol
+from .forms import CustomLoginForm, AsignacionForm, UserCreationFormWithRol, ProductoForm
 from .models import Producto, Asignacion
 
 
@@ -138,6 +138,24 @@ def cambiar_estado_asignacion(request, asignacion_id):
     return redirect('core:asignar')
 
 @login_required
+@login_required
+def editar_producto(request, producto_id):
+    if request.user.rol != 'ADMIN':
+        return HttpResponseForbidden("No tiene permiso para editar productos.")
+    
+    producto = get_object_or_404(Producto, id=producto_id)
+    
+    if request.method == 'POST':
+        form = ProductoForm(request.POST, instance=producto)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Producto actualizado correctamente.')
+            return redirect('core:home')
+    else:
+        form = ProductoForm(instance=producto)
+    
+    return render(request, 'core/editar_producto.html', {'form': form})
+
 def register_user(request):
     if request.user.rol != 'ADMIN':
         return HttpResponseForbidden("No tiene permiso para registrar usuarios.")

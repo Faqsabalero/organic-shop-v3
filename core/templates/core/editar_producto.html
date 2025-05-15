@@ -1,0 +1,95 @@
+{% extends "core/base.html" %}
+
+{% block title %}Editar Producto - Organic Shops{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <!-- Header -->
+        <div class="px-6 py-4 bg-green-700">
+            <h2 class="text-2xl font-bold text-white">Editar Producto</h2>
+        </div>
+
+        <div class="p-6">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Nombre -->
+                <div>
+                    <label for="{{ form.nombre.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Nombre del Producto
+                    </label>
+                    {{ form.nombre }}
+                    {% if form.nombre.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.nombre.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Descripción -->
+                <div>
+                    <label for="{{ form.descripcion.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Descripción
+                    </label>
+                    {{ form.descripcion }}
+                    {% if form.descripcion.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.descripcion.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Precio -->
+                    <div>
+                        <label for="{{ form.precio.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            Precio de Venta
+                        </label>
+                        {{ form.precio }}
+                        {% if form.precio.errors %}
+                            <p class="text-red-600 text-sm mt-1">{{ form.precio.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Costo -->
+                    <div>
+                        <label for="{{ form.costo.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            Costo
+                        </label>
+                        {{ form.costo }}
+                        {% if form.costo.errors %}
+                            <p class="text-red-600 text-sm mt-1">{{ form.costo.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- URL de la imagen -->
+                <div>
+                    <label for="{{ form.imagen_url.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        URL de la Imagen
+                    </label>
+                    {{ form.imagen_url }}
+                    {% if form.imagen_url.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.imagen_url.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Vista previa de la imagen -->
+                {% if form.instance.imagen_url %}
+                <div class="mt-4">
+                    <p class="block text-sm font-medium text-gray-700 mb-2">Vista Previa</p>
+                    <img src="{{ form.instance.imagen_url }}" alt="{{ form.instance.nombre }}" class="w-48 h-48 object-cover rounded-lg">
+                </div>
+                {% endif %}
+
+                <!-- Botones -->
+                <div class="flex justify-end space-x-4">
+                    <a href="{% url 'core:home' %}" class="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 transition">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="px-6 py-2 bg-green-700 text-white font-semibold rounded-md hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 transition">
+                        Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

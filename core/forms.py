@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from .models import CustomUser, Asignacion
+from .models import CustomUser, Asignacion, Producto
 
 class CustomLoginForm(AuthenticationForm):
     username = forms.CharField(
@@ -32,6 +32,18 @@ class UserCreationFormWithRol(UserCreationForm):
             self.fields[field].widget.attrs.update({
                 'class': 'w-full px-4 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600'
             })
+
+class ProductoForm(forms.ModelForm):
+    class Meta:
+        model = Producto
+        fields = ['nombre', 'descripcion', 'precio', 'costo', 'imagen_url']
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'w-full px-4 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600'}),
+            'descripcion': forms.Textarea(attrs={'class': 'w-full px-4 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600', 'rows': 4}),
+            'precio': forms.NumberInput(attrs={'class': 'w-full px-4 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600', 'min': '0', 'step': '0.01'}),
+            'costo': forms.NumberInput(attrs={'class': 'w-full px-4 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600', 'min': '0', 'step': '0.01'}),
+            'imagen_url': forms.URLInput(attrs={'class': 'w-full px-4 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600'}),
+        }
 
 class AsignacionForm(forms.ModelForm):
     class Meta:
