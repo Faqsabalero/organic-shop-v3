@@ -34,45 +34,51 @@
 	                        <a href="{% url 'asignar' %}" class="hover:text-green-300 transition">Mi Panel</a>
 	                    {% elif user.rol == 'DISTRIBUIDOR' %}
 	                        <a href="{% url 'distribuidor' %}" class="hover:text-green-300 transition">Mi Panel</a>
-	                    {% endif %}
-	                            {% endif %}
-	                            <form action="{% url 'logout' %}" method="post" class="block">
-	                                {% csrf_token %}
-	                {% else %}
-	                    <a href="{% url 'login' %}" class="hover:text-green-300 transition">Iniciar Sesión</a>
 	                {% endif %}
-	        <nav id="mobile-menu" class="md:hidden bg-white border-t border-gray-200 hidden">
-	            <a href="{% url 'home' %}" class="block px-4 py-3 border-b border-gray-200 hover:bg-green-50 font-semibold text-green-600">
-	                Inicio
-	                    {% if user.rol == 'ADMIN' %}
-	                        <a href="{% url 'asignar' %}" class="block px-4 py-3 border-b border-gray-200 hover:bg-green-50 font-semibold text-green-600">
-	                            Mi Panel
-	                        </a>
-	                        <a href="{% url 'register' %}" class="block px-4 py-3 border-b border-gray-200 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition flex items-center space-x-2">
-	                            <i class="fas fa-user-plus"></i>
-	                            Registrar Usuario
-	                        </a>
-	                    {% elif user.rol == 'DISTRIBUIDOR' %}
-	                        <a href="{% url 'distribuidor' %}" class="block px-4 py-3 border-b border-gray-200 hover:bg-green-50 font-semibold text-green-600">
-	                            Mi Panel
-	                        {% endif %}
-	                    </a>
-	                    <form action="{% url 'logout' %}" method="post" class="block">
-	                        {% csrf_token %}
 	            {% else %}
-	                <a href="{% url 'login' %}" class="block px-4 py-3 hover:bg-green-50 font-semibold text-green-600">
-	                    Iniciar Sesión
-	            <nav class="mt-4 md:mt-0 space-x-6 font-semibold">
-	                <a href="{% url 'home' %}" class="hover:text-green-400 transition">Inicio</a>
-	                {% if user.is_authenticated %}
-	                    {% if user.rol == 'ADMIN' %}
-	                        <a href="{% url 'asignar' %}" class="hover:text-green-400 transition">Panel Admin</a>
-	                    {% elif user.rol == 'DISTRIBUIDOR' %}
-	                        <a href="{% url 'distribuidor' %}" class="hover:text-green-400 transition">Mi Panel</a>
-	                    {% endif %}
-	                </button>
-	                        <a href="{% url 'distribuidor' %}" class="hover:text-green-400 transition">Mi Panel</a>
-	                    {% endif %}
+	                <form action="{% url 'logout' %}" method="post" class="block">
+	                    {% csrf_token %}
+	                    <button type="submit" class="hover:underline">Cerrar sesión</button>
+	                </form>
+	            {% endif %}
+	        {% else %}
+	            <a href="{% url 'login' %}" class="hover:text-green-300 transition">Iniciar Sesión</a>
+	        {% endif %}
+	    </nav>
+	    <nav id="mobile-menu" class="md:hidden bg-white border-t border-gray-200 hidden">
+	        <a href="{% url 'home' %}" class="block px-4 py-3 border-b border-gray-200 hover:bg-green-50 font-semibold text-green-600">
+	            Inicio
+	        </a>
+	        {% if user.is_authenticated %}
+	            {% if user.rol == 'ADMIN' %}
+	                <a href="{% url 'asignar' %}" class="block px-4 py-3 border-b border-gray-200 hover:bg-green-50 font-semibold text-green-600">
+	                    Mi Panel
+	                </a>
+	                <a href="{% url 'register' %}" class="block px-4 py-3 border-b border-gray-200 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition flex items-center space-x-2">
+	                    <i class="fas fa-user-plus"></i>
+	                    Registrar Usuario
+	                </a>
+	            {% elif user.rol == 'DISTRIBUIDOR' %}
+	                <a href="{% url 'distribuidor' %}" class="block px-4 py-3 border-b border-gray-200 hover:bg-green-50 font-semibold text-green-600">
+	                    Mi Panel
+	                </a>
+	            {% endif %}
+	        {% else %}
+	            <form action="{% url 'logout' %}" method="post" class="block">
+	                {% csrf_token %}
+	                <button type="submit" class="hover:underline">Cerrar sesión</button>
+	            </form>
+	        {% endif %}
+	    </nav>
+	    <nav class="mt-4 md:mt-0 space-x-6 font-semibold">
+	        <a href="{% url 'home' %}" class="hover:text-green-400 transition">Inicio</a>
+	        {% if user.is_authenticated %}
+	            {% if user.rol == 'ADMIN' %}
+	                <a href="{% url 'asignar' %}" class="hover:text-green-400 transition">Panel Admin</a>
+	            {% elif user.rol == 'DISTRIBUIDOR' %}
+	                <a href="{% url 'distribuidor' %}" class="hover:text-green-400 transition">Mi Panel</a>
+	            {% endif %}
+	        </nav>
 
                 {% endif %}
             </nav>
