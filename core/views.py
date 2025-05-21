@@ -110,15 +110,46 @@ def distribuidor_view(request):
 def revendedor_view(request):
     if request.user.rol != 'REVENDEDOR':
         return HttpResponseForbidden("No tiene permiso para acceder a esta sección.")
-
+    
     revendedor = get_object_or_404(Revendedor, user=request.user)
     asignaciones = Asignacion.objects.filter(
         distribuidor=revendedor.distribuidor
     ).order_by('-fecha_asignacion')
-
+    
     return render(request, 'core/revendedor.html', {
         'asignaciones': asignaciones,
         'distribuidor': revendedor.distribuidor
+    })
+
+@login_required
+def carrito_view(request, producto_id):
+    producto = get_object_or_404(Producto, id=producto_id)
+    
+    if request.method == 'POST':
+        form = CompraForm(request.POST)
+        if form.is_valid():
+            # Procesar la compra
+            venta = Venta.objects.create(
+                producto=producto,
+                cantidad=form.cleaned_data.get('cantidad', 1),
+                total=producto.precio_publico * form.cleaned_data.get('cantidad', 1),
+                nombre_completo=form.cleaned_data['nombre_completo'],
+                email=form.cleaned_data['email'],
+                dni=form.cleaned_data['dni'],
+                telefono=form.cleaned_data['telefono'],
+                provincia=form.cleaned_data['provincia'],
+                ciudad=form.cleaned_data['ciudad'],
+                domicilio=form.cleaned_data['domicilio'],
+                estado_pago='PENDIENTE'
+            )
+            messages.success(request, 'Compra registrada correctamente.')
+            return redirect('core:home')
+    else:
+        form = CompraForm()
+    
+    return render(request, 'core/carrito.html', {
+        'producto': producto,
+        'form': form
     })
 
 
