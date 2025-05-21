@@ -1,28 +1,39 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
-from django.contrib.auth import logout
-from django.http import HttpResponseForbidden
+from django.contrib.auth import logout, login as auth_login, authenticate
+from django.http import HttpResponseForbidden, JsonResponse, HttpResponseRedirect
 from django.contrib import messages
-from django.db.models import Count
-from django.views.decorators.http import require_http_methods
+from django.db.models import Count, Q
+from django.views.decorators.http import require_http_methods, require_POST
 from django.utils.decorators import method_decorator
-from .forms import CustomLoginForm, AsignacionForm, UserCreationFormWithRol, ProductoForm
-from .models import Producto, Asignacion
+from django.views.decorators.csrf import csrf_exempt, csrf_protect, ensure_csrf_cookie
+from django.urls import reverse
+from django.conf import settings
+from decimal import Decimal
+import mercadopago
+import json
 
+from .forms import (
+    CustomLoginForm, 
+    AsignacionForm, 
+    UserCreationFormWithRol, 
+    ProductoForm, 
+    RevendedorCreationForm, 
+    CompraForm
+)
+from .models import Producto, Asignacion, Revendedor, Venta, CustomUser
 
 class CustomLoginView(LoginView):
     template_name = 'core/login.html'
     authentication_form = CustomLoginForm
     redirect_authenticated_user = True
 
-
 class CustomLogoutView(LogoutView):
     next_page = 'core:home'
 
 def home_view(request):
     productos = Producto.objects.all()
-    print(f"Cantidad de productos en DB: {productos.count()}")
     return render(request, 'core/home.html', {'productos': productos})
 
 @login_required
@@ -44,19 +55,11 @@ def asignar_view(request):
         form = AsignacionForm()
     
     asignaciones = Asignacion.objects.all().order_by('-fecha_asignacion')
-
-    # Calcular datos de ventas para la pestaña "Ventas"
-    total_ventas = 0
-    cantidad_vendida = 0
-    costo_total = 0
-    ganancia = 0
-
     ventas = Asignacion.objects.filter(estado='PAGADO')
-    for venta in ventas:
-        cantidad_vendida += venta.cantidad
-        costo_total += venta.producto.costo * venta.cantidad
-        total_ventas += venta.producto.precio * venta.cantidad
-
+    
+    total_ventas = sum(venta.producto.precio_publico * venta.cantidad for venta in ventas)
+    cantidad_vendida = sum(venta.cantidad for venta in ventas)
+    costo_total = sum(venta.producto.costo * venta.cantidad for venta in ventas)
     ganancia = total_ventas - costo_total
 
     context = {
@@ -80,15 +83,37 @@ def distribuidor_view(request):
         total=Count('producto', distinct=True)
     )['total']
     
+    if request.method == 'POST':
+        form = RevendedorCreationForm(request.POST)
+        if form.is_valid():
+            revendedor = form.save(commit=False)
+            revendedor.distribuidor = request.user
+            revendedor.save()
+            messages.success(request, 'Revendedor creado exitosamente.')
+            return redirect('core:distribuidor')
+    else:
+        form = RevendedorCreationForm()
+    
     return render(request, 'core/distribuidor.html', {
         'asignaciones': asignaciones,
-        'productos_distintos': productos_distintos
+        'productos_distintos': productos_distintos,
+        'form': form,
     })
 
-from decimal import Decimal
-from django.http import JsonResponse
-from django.conf import settings
-import mercadopago
+@login_required
+def revendedor_view(request):
+    if request.user.rol != 'REVENDEDOR':
+        return HttpResponseForbidden("No tiene permiso para acceder a esta sección.")
+    
+    revendedor = get_object_or_404(Revendedor, user=request.user)
+    asignaciones = Asignacion.objects.filter(
+        distribuidor=revendedor.distribuidor
+    ).order_by('-fecha_asignacion')
+    
+    return render(request, 'core/revendedor.html', {
+        'asignaciones': asignaciones,
+        'distribuidor': revendedor.distribuidor
+    })
 
 def carrito_view(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
@@ -101,8 +126,8 @@ def carrito_view(request, producto_id):
                 "title": producto.nombre,
                 "quantity": cantidad,
                 "currency_id": "ARS",
-                "unit_price": float(producto.precio),
-                "description": producto.descripcion[:100],  # Limitamos la descripción a 100 caracteres
+                "unit_price": float(producto.precio_publico),
+                "description": producto.descripcion[:100],
                 "picture_url": producto.imagen_url
             }
         ],
@@ -159,33 +184,43 @@ def pago_pendiente(request):
     messages.info(request, 'El pago está pendiente de confirmación.')
     return redirect('core:home')
 
-def procesar_compra(request, producto_id):
+@csrf_protect
+def procesar_compra(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'Método no permitido'}, status=405)
     
     try:
-        producto = get_object_or_404(Producto, id=producto_id)
-        cantidad = int(request.POST.get('cantidad', 1))
-        email = request.POST.get('email', '')
+        form = CompraForm(request.POST)
+        if not form.is_valid():
+            return JsonResponse({'error': 'Datos inválidos'}, status=400)
         
-        if cantidad < 1:
-            return JsonResponse({'error': 'Cantidad inválida'}, status=400)
+        carrito = request.session.get('carrito', {})
+        if not carrito:
+            return JsonResponse({'error': 'Carrito vacío'}, status=400)
         
-        total = Decimal(producto.precio) * Decimal(cantidad)
+        total = Decimal('0')
+        for producto_id, cantidad in carrito.items():
+            producto = Producto.objects.get(id=producto_id)
+            total += producto.precio_publico * Decimal(str(cantidad))
         
         # Crear la venta
         venta = Venta.objects.create(
-            producto=producto,
-            cantidad=cantidad,
             total=total,
-            email_comprador=email
+            nombre_completo=form.cleaned_data['nombre_completo'],
+            email=form.cleaned_data['email'],
+            dni=form.cleaned_data['dni'],
+            telefono=form.cleaned_data['telefono'],
+            provincia=form.cleaned_data['provincia'],
+            ciudad=form.cleaned_data['ciudad'],
+            domicilio=form.cleaned_data['domicilio']
         )
         
-        # Aquí se integraría con Mercado Pago
-        # Por ahora solo retornamos éxito
+        # Limpiar carrito
+        request.session['carrito'] = {}
+        
         return JsonResponse({
             'success': True,
-            'message': 'Venta procesada correctamente',
+            'message': 'Compra procesada correctamente',
             'venta_id': venta.id
         })
         
@@ -205,7 +240,6 @@ def cambiar_estado_asignacion(request, asignacion_id):
     return redirect('core:asignar')
 
 @login_required
-@login_required
 def editar_producto(request, producto_id):
     if request.user.rol != 'ADMIN':
         return HttpResponseForbidden("No tiene permiso para editar productos.")
@@ -223,17 +257,30 @@ def editar_producto(request, producto_id):
     
     return render(request, 'core/editar_producto.html', {'form': form})
 
+@login_required
 def register_user(request):
-    if request.user.rol != 'ADMIN':
+    if request.user.rol != 'ADMIN' and request.user.rol != 'DISTRIBUIDOR':
         return HttpResponseForbidden("No tiene permiso para registrar usuarios.")
-        
+    
     if request.method == 'POST':
-        form = UserCreationFormWithRol(request.POST)
+        if request.user.rol == 'ADMIN':
+            form = UserCreationFormWithRol(request.POST)
+        else:
+            form = RevendedorCreationForm(request.POST)
+            
         if form.is_valid():
-            form.save()
+            user = form.save()
+            if request.user.rol == 'DISTRIBUIDOR':
+                Revendedor.objects.create(
+                    user=user,
+                    distribuidor=request.user
+                )
             messages.success(request, 'Usuario creado exitosamente.')
-            return redirect('core:asignar')
+            return redirect('core:home')
     else:
-        form = UserCreationFormWithRol()
+        if request.user.rol == 'ADMIN':
+            form = UserCreationFormWithRol()
+        else:
+            form = RevendedorCreationForm()
     
     return render(request, 'core/register.html', {'form': form})

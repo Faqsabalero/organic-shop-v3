@@ -5,6 +5,7 @@ class CustomUser(AbstractUser):
     ROL_CHOICES = (
         ('ADMIN', 'Admin'),
         ('DISTRIBUIDOR', 'Distribuidor'),
+        ('REVENDEDOR', 'Revendedor'),
     )
     rol = models.CharField(max_length=20, choices=ROL_CHOICES, default='DISTRIBUIDOR')
 
@@ -19,12 +20,21 @@ class CustomUser(AbstractUser):
 class Producto(models.Model):
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField()
-    precio = models.DecimalField(max_digits=10, decimal_places=2)
     costo = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    precio_distribuidor = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    precio_revendedor = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    precio_publico = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     imagen_url = models.URLField()
 
     def __str__(self):
         return self.nombre
+
+class Revendedor(models.Model):
+    distribuidor = models.ForeignKey('CustomUser', on_delete=models.CASCADE, related_name='revendedores')
+    user = models.OneToOneField('CustomUser', on_delete=models.CASCADE, related_name='revendedor_profile')
+
+    def __str__(self):
+        return f'Revendedor: {self.user.username} (Distribuidor: {self.distribuidor.username})'
 
 class Asignacion(models.Model):
     PLAN_PAGO_CHOICES = (
@@ -56,6 +66,12 @@ class Venta(models.Model):
     fecha_venta = models.DateTimeField(auto_now_add=True)
     email_comprador = models.EmailField(null=True, blank=True)
     estado_pago = models.CharField(max_length=20, default='PENDIENTE')
+    nombre_completo = models.CharField(max_length=255, null=True, blank=True)
+    dni = models.CharField(max_length=20, null=True, blank=True)
+    telefono = models.CharField(max_length=20, null=True, blank=True)
+    provincia = models.CharField(max_length=100, null=True, blank=True)
+    ciudad = models.CharField(max_length=100, null=True, blank=True)
+    domicilio = models.CharField(max_length=255, null=True, blank=True)
     
     def __str__(self):
         return f'Venta {self.id} - {self.producto.nombre}'

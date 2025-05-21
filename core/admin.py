@@ -21,9 +21,9 @@ class CustomUserAdmin(UserAdmin):
     ordering = ('username',)
 
 class ProductoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'precio', 'imagen_url')
+    list_display = ('nombre', 'costo', 'precio_distribuidor', 'precio_revendedor', 'precio_publico', 'imagen_url')
     search_fields = ('nombre', 'descripcion')
-    list_filter = ('precio',)
+    list_filter = ('precio_publico',)
 
 class AsignacionAdmin(admin.ModelAdmin):
     list_display = ('distribuidor', 'producto', 'cantidad', 'fecha_asignacion', 'plan_pago')
